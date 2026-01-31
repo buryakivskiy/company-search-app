@@ -1,0 +1,51 @@
+# ===============================
+# .NET / C# Backend (api)
+# ===============================
+
+api/bin/
+api/obj/
+api/*.user
+api/*.suo
+api/*.vsp
+api/.vs/
+api/*.db
+api/*.db-shm
+api/*.db-wal
+api/*.pdb
+api/*.log
+api/*.dll
+api/*.exe
+api/*.cache
+api/*.DS_Store
+
+# IDE folders
+api/.idea/
+api/.vscode/
+
+# ===============================
+# Node / Frontend (interface)
+# ===============================
+
+interface/node_modules/
+interface/dist/
+interface/build/
+interface/.env
+interface/.env.local
+interface/.env.development.local
+interface/.env.test.local
+interface/.env.production.local
+interface/npm-debug.log*
+interface/yarn-debug.log*
+interface/yarn-error.log*
+interface/pnpm-debug.log*
+
+# IDE / system files
+interface/.DS_Store
+
+# ===============================
+# Optional temp files
+# ===============================
+
+*.tmp
+*.bak
+*.swp
