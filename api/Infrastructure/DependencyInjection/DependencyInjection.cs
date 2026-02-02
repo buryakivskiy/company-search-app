@@ -2,21 +2,13 @@ using api.Features.CompanySearch.Clients;
 using api.Features.CompanySearch.Interfaces;
 using api.Features.CompanySearch.Services;
 using api.Infrastructure.Configurations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 
-namespace api.Infrastructure.Extensions;
+namespace api.Infrastructure.DependencyInjection;
 
-/// <summary>
-/// Extension methods for configuring dependency injection.
-/// </summary>
-public static class ServiceCollectionExtensions
+public static class DependencyInjection
 {
-    /// <summary>
-    /// Adds infrastructure services to the dependency injection container.
-    /// </summary>
-    /// <param name="services">The service collection.</param>
-    /// <param name="configuration">The application configuration.</param>
-    /// <returns>The service collection with added services.</returns>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // Configuration
@@ -27,9 +19,18 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICompanySearchService, CompanySearchService>();
         services.AddScoped<ICompanyMapper, api.Features.CompanySearch.Mappers.CompanyMapper>();
 
+        // Persistence / Companies
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        services.AddDbContext<api.Infrastructure.Persistence.AppDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddScoped<api.Features.Companies.Interfaces.ICompanyRepository, api.Features.Companies.Repositories.CompanyRepository>();
+        services.AddScoped<api.Features.Companies.Interfaces.ICompanyService, api.Features.Companies.Services.CompanyService>();
+
         // Swagger/OpenAPI
         services.AddSwaggerGen(c =>
         {
+            // Use unique schema ids to avoid collisions when different types share the same class name in different namespaces
+            c.CustomSchemaIds(type => (type.FullName ?? type.Name).Replace('+', '.'));
+
             c.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "Company Search API",
@@ -37,7 +38,6 @@ public static class ServiceCollectionExtensions
                 Description = "API for searching Norwegian companies from Brønnøysund Register Centre"
             });
 
-            // Include XML comments if file exists
             var xmlFile = Path.Combine(AppContext.BaseDirectory, "api.xml");
             if (File.Exists(xmlFile))
             {

@@ -1,59 +1,59 @@
 namespace api.Features.CompanySearch.DTOs;
 
 /// <summary>
-/// Represents a company returned by our API (internal naming in English).
+/// Represents a company returned by our API.
 /// </summary>
 public class Company
 {
     /// <summary>
     /// The organization's registration number.
     /// </summary>
-    public string? organizationNumber { get; set; }
+    public string? OrganizationNumber { get; set; }
 
     /// <summary>
     /// The name of the organization.
     /// </summary>
-    public string? name { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// The organizational form of the company.
     /// </summary>
-    public OrganizationForm? organizationForm { get; set; }
+    public OrganizationForm? OrganizationForm { get; set; }
 
     /// <summary>
     /// The website of the organization.
     /// </summary>
-    public string? website { get; set; }
+    public string? Website { get; set; }
 
     /// <summary>
     /// The business address of the organization.
     /// </summary>
-    public Address? businessAddress { get; set; }
+    public Address? BusinessAddress { get; set; }
 
     /// <summary>
     /// The establishment date of the organization.
     /// </summary>
-    public string? establishmentDate { get; set; }
+    public string? EstablishmentDate { get; set; }
 
     /// <summary>
     /// Whether the organization is registered in the value-added tax register.
     /// </summary>
-    public bool registeredInVatRegister { get; set; }
+    public bool RegisteredInVatRegister { get; set; }
 
     /// <summary>
     /// Whether the organization is bankrupt.
     /// </summary>
-    public bool bankrupt { get; set; }
+    public bool Bankrupt { get; set; }
 
     /// <summary>
     /// Whether the organization is under liquidation.
     /// </summary>
-    public bool underLiquidation { get; set; }
+    public bool UnderLiquidation { get; set; }
 
     /// <summary>
     /// Whether the organization is under compulsory liquidation or dissolution.
     /// </summary>
-    public bool underCompulsoryLiquidationOrDissolution { get; set; }
+    public bool UnderCompulsoryLiquidationOrDissolution { get; set; }
 }
 
 /// <summary>
@@ -64,12 +64,12 @@ public class OrganizationForm
     /// <summary>
     /// The code of the organizational form.
     /// </summary>
-    public string? code { get; set; }
+    public string? Code { get; set; }
 
     /// <summary>
     /// The description of the organizational form.
     /// </summary>
-    public string? description { get; set; }
+    public string? Description { get; set; }
 }
 
 /// <summary>
@@ -80,35 +80,35 @@ public class Address
     /// <summary>
     /// The country of the address.
     /// </summary>
-    public string? country { get; set; }
+    public string? Country { get; set; }
 
     /// <summary>
     /// The country code of the address.
     /// </summary>
-    public string? countryCode { get; set; }
+    public string? CountryCode { get; set; }
 
     /// <summary>
     /// The postal code of the address.
     /// </summary>
-    public string? postalCode { get; set; }
+    public string? PostalCode { get; set; }
 
     /// <summary>
     /// The city of the address.
     /// </summary>
-    public string? city { get; set; }
+    public string? City { get; set; }
 
     /// <summary>
     /// The address lines.
     /// </summary>
-    public List<string>? addressLines { get; set; }
+    public List<string>? AddressLines { get; set; }
 
     /// <summary>
     /// The municipality of the address.
     /// </summary>
-    public string? municipality { get; set; }
+    public string? Municipality { get; set; }
 
     /// <summary>
     /// The municipality number of the address.
     /// </summary>
-    public string? municipalityNumber { get; set; }
+    public string? MunicipalityNumber { get; set; }
 }

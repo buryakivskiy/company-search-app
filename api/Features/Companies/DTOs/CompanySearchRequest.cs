@@ -1,29 +1,22 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace api.Features.CompanySearch.DTOs;
+namespace api.Features.Companies.DTOs;
 
 /// <summary>
-/// Request parameters for company search.
+/// Parameters for searching saved companies.
 /// </summary>
 public class CompanySearchRequest
 {
     /// <summary>
-    /// Search by company name (partial match).
+    /// Partial or full company name to match.
     /// </summary>
-    [MaxLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
     public string? Name { get; set; }
 
     /// <summary>
-    /// Search by organization number.
+    /// Exact organization number to match (9 digits).
     /// </summary>
     [RegularExpression(@"^\d{9}$", ErrorMessage = "Organization number must be exactly 9 digits")]
     public string? OrganizationNumber { get; set; }
-
-    /// <summary>
-    /// Filter by organizational form code.
-    /// </summary>
-    [MaxLength(10, ErrorMessage = "Organization form cannot exceed 10 characters")]
-    public string? OrganizationForm { get; set; }
 
     /// <summary>
     /// Page number (1-based).
@@ -32,8 +25,8 @@ public class CompanySearchRequest
     public int Page { get; set; } = 1;
 
     /// <summary>
-    /// Number of items per page.
+    /// Page size.
     /// </summary>
-    [Range(1, 50, ErrorMessage = "PageSize must be between 1 and 50")]
+    [Range(1, 50, ErrorMessage = "Page size must be between 1 and 50")]
     public int PageSize { get; set; } = 10;
 }

@@ -11,29 +11,29 @@ public class CompanyMapper : ICompanyMapper
 
         return new Company
         {
-            organizationNumber = ec.organisasjonsnummer,
-            name = ec.navn,
-            organizationForm = ec.organisasjonsform == null ? null : new OrganizationForm
+            OrganizationNumber = ec.organisasjonsnummer,
+            Name = ec.navn,
+            OrganizationForm = ec.organisasjonsform == null ? null : new OrganizationForm
             {
-                code = ec.organisasjonsform.kode,
-                description = ec.organisasjonsform.beskrivelse
+                Code = ec.organisasjonsform.kode,
+                Description = ec.organisasjonsform.beskrivelse
             },
-            website = ec.hjemmeside,
-            businessAddress = ec.forretningsadresse == null ? null : new Address
+            Website = ec.hjemmeside,
+            BusinessAddress = ec.forretningsadresse == null ? null : new Address
             {
-                country = ec.forretningsadresse.land,
-                countryCode = ec.forretningsadresse.landkode,
-                postalCode = ec.forretningsadresse.postnummer,
-                city = ec.forretningsadresse.poststed,
-                addressLines = ec.forretningsadresse.adresse,
-                municipality = ec.forretningsadresse.kommune,
-                municipalityNumber = ec.forretningsadresse.kommunenummer
+                Country = ec.forretningsadresse.land,
+                CountryCode = ec.forretningsadresse.landkode,
+                PostalCode = ec.forretningsadresse.postnummer,
+                City = ec.forretningsadresse.poststed,
+                AddressLines = ec.forretningsadresse.adresse,
+                Municipality = ec.forretningsadresse.kommune,
+                MunicipalityNumber = ec.forretningsadresse.kommunenummer
             },
-            establishmentDate = ec.stiftelsesdato,
-            registeredInVatRegister = ec.registrertIMvaregisteret,
-            bankrupt = ec.konkurs,
-            underLiquidation = ec.underAvvikling,
-            underCompulsoryLiquidationOrDissolution = ec.underTvangsavviklingEllerTvangsopplosning
+            EstablishmentDate = ec.stiftelsesdato,
+            RegisteredInVatRegister = ec.registrertIMvaregisteret,
+            Bankrupt = ec.konkurs,
+            UnderLiquidation = ec.underAvvikling,
+            UnderCompulsoryLiquidationOrDissolution = ec.underTvangsavviklingEllerTvangsopplosning
         };
     }
 }

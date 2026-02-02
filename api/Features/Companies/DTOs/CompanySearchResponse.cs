@@ -1,14 +1,16 @@
-namespace api.Features.CompanySearch.DTOs;
+using System.Collections.Generic;
+
+namespace api.Features.Companies.DTOs;
 
 /// <summary>
-/// Response containing search results and pagination information.
+/// Search result for saved companies with pagination.
 /// </summary>
 public class CompanySearchResponse
 {
     /// <summary>
-    /// List of companies matching the search criteria.
+    /// Matching items.
     /// </summary>
-    public IEnumerable<Company> Items { get; set; } = new List<Company>();
+    public IEnumerable<CompanyResponse> Items { get; set; } = new List<CompanyResponse>();
 
     /// <summary>
     /// Current page number (1-based).
@@ -16,12 +18,12 @@ public class CompanySearchResponse
     public int Page { get; set; }
 
     /// <summary>
-    /// Number of items per page.
+    /// Page size.
     /// </summary>
     public int PageSize { get; set; }
 
     /// <summary>
-    /// Total number of items across all pages.
+    /// Total number of matching items.
     /// </summary>
     public int TotalItems { get; set; }
 

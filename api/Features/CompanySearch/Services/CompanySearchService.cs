@@ -16,13 +16,14 @@ public class CompanySearchService : ICompanySearchService
 
     public async Task<CompanySearchResponse> SearchCompaniesAsync(CompanySearchRequest request)
     {
+        // Prepare request for external API (external API expects 0-based page and parameter name "size").
         var apiRequest = new CompanySearchRequest
         {
             Name = request.Name,
             OrganizationNumber = request.OrganizationNumber,
             OrganizationForm = request.OrganizationForm,
-            Page = request.Page - 1, // Convert to 0-based
-            Size = request.Size
+            Page = request.Page - 1, // Convert to 0-based for external API
+            PageSize = request.PageSize
         };
 
         var apiResponse = await _client.SearchCompaniesAsync(apiRequest);
@@ -35,16 +36,13 @@ public class CompanySearchService : ICompanySearchService
 
         return new CompanySearchResponse
         {
-            items = items,
-            pagination = new Pagination
-            {
-                page = currentPage,
-                pageSize = apiResponse.page?.size ?? request.Size,
-                totalItems = apiResponse.page?.totalElements ?? 0,
-                totalPages = totalPages,
-                hasNext = currentPage < totalPages,
-                hasPrevious = currentPage > 1
-            }
+            Items = items,
+            Page = currentPage,
+            PageSize = apiResponse.page?.size ?? request.PageSize,
+            TotalItems = apiResponse.page?.totalElements ?? 0,
+            TotalPages = totalPages,
+            HasNext = currentPage < totalPages,
+            HasPrevious = currentPage > 1
         };
     }
 }
