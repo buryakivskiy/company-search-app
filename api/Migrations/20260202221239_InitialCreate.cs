@@ -29,7 +29,8 @@ namespace api.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_companies_OrganizationNumber",
                 table: "companies",
-                column: "OrganizationNumber");
+                column: "OrganizationNumber",
+                unique: true);
         }
 
         /// <inheritdoc />

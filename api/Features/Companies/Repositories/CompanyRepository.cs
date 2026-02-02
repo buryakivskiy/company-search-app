@@ -35,6 +35,11 @@ public class CompanyRepository : ICompanyRepository
         return await _db.Companies.FindAsync(id);
     }
 
+    public async Task<SavedCompany?> GetByOrganizationNumberAsync(string organizationNumber)
+    {
+        return await _db.Companies.FirstOrDefaultAsync(c => c.OrganizationNumber == organizationNumber);
+    }
+
     public async Task<(IEnumerable<SavedCompany> Items, int TotalItems)> SearchAsync(string? name, string? organizationNumber, int page, int pageSize)
     {
         var query = _db.Companies.AsQueryable();

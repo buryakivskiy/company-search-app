@@ -1,6 +1,7 @@
 using api.Features.Companies.DTOs;
 using api.Features.Companies.Interfaces;
 using api.Features.Companies.Entities;
+using api.Infrastructure.Exceptions;
 
 namespace api.Features.Companies.Services;
 
@@ -15,6 +16,16 @@ public class CompanyService : ICompanyService
 
     public async Task<CompanyResponse> CreateAsync(CompanyCreateRequest request)
     {
+        // Ensure organization number uniqueness
+        if (!string.IsNullOrWhiteSpace(request.OrganizationNumber))
+        {
+            var existing = await _repo.GetByOrganizationNumberAsync(request.OrganizationNumber);
+            if (existing != null)
+            {
+                throw new ConflictException($"Organization number {request.OrganizationNumber} already exists.");
+            }
+        }
+
         var entity = new SavedCompany
         {
             Id = Guid.NewGuid(),

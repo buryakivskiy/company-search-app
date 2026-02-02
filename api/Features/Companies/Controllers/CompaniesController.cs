@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using api.Features.Companies.DTOs;
 using api.Features.Companies.Interfaces;
+using api.Infrastructure.Exceptions;
 
 namespace api.Features.Companies.Controllers;
 
@@ -26,11 +27,19 @@ public class CompaniesController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(CompanyResponse), 201)]
     [ProducesResponseType(400)]
+    [ProducesResponseType(409)]
     [ProducesResponseType(500)]
     public async Task<IActionResult> Create([FromBody] CompanyCreateRequest request)
     {
-        var created = await _service.CreateAsync(request);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        try
+        {
+            var company = await _service.CreateAsync(request);
+            return CreatedAtAction(nameof(GetById), new { id = company.Id }, company);
+        }
+        catch (ConflictException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 
     /// <summary>

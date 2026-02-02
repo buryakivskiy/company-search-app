@@ -14,6 +14,7 @@ public class SavedCompanyConfiguration : IEntityTypeConfiguration<SavedCompany>
         builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
         builder.Property(x => x.Address).HasMaxLength(500);
         builder.Property(x => x.CreatedAt).IsRequired();
-        builder.HasIndex(x => x.OrganizationNumber);
+        // Ensure organization number is unique
+        builder.HasIndex(x => x.OrganizationNumber).IsUnique();
     }
 }

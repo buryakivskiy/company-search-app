@@ -12,7 +12,7 @@ using api.Infrastructure.Persistence;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260202214147_InitialCreate")]
+    [Migration("20260202221239_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -50,7 +50,8 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrganizationNumber");
+                    b.HasIndex("OrganizationNumber")
+                        .IsUnique();
 
                     b.ToTable("companies", (string)null);
                 });

@@ -47,7 +47,8 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrganizationNumber");
+                    b.HasIndex("OrganizationNumber")
+                        .IsUnique();
 
                     b.ToTable("companies", (string)null);
                 });
