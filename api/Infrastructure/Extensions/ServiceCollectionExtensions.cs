@@ -20,11 +20,12 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // Configuration
-        services.Configure<BrønnøysundApiConfiguration>(configuration.GetSection("BrønnøysundApi"));
+        services.Configure<NorwegianBusinessRegisterApiConfiguration>(configuration.GetSection("NorwegianBusinessRegisterApi"));
 
         // Company Search Services
-        services.AddHttpClient<ICompanySearchClient, BrønnøysundClient>();
+        services.AddHttpClient<ICompanySearchClient, NorwegianBusinessRegisterClient>();
         services.AddScoped<ICompanySearchService, CompanySearchService>();
+        services.AddScoped<ICompanyMapper, api.Features.CompanySearch.Mappers.CompanyMapper>();
 
         // Swagger/OpenAPI
         services.AddSwaggerGen(c =>

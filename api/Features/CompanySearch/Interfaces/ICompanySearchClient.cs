@@ -12,5 +12,5 @@ public interface ICompanySearchClient
     /// </summary>
     /// <param name="request">The search request containing filters.</param>
     /// <returns>The full response from the API including companies and pagination.</returns>
-    Task<BrønnøysundResponse> SearchCompaniesAsync(CompanySearchRequest request);
+    Task<NorwegianBusinessRegisterResponse> SearchCompaniesAsync(CompanySearchRequest request);
 }

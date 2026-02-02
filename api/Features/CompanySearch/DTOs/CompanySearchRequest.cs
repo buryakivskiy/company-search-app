@@ -17,13 +17,13 @@ public class CompanySearchRequest
     /// Search by organization number.
     /// </summary>
     [RegularExpression(@"^\d{9}$", ErrorMessage = "Organization number must be exactly 9 digits")]
-    public string? Organisasjonsnummer { get; set; }
+    public string? OrganizationNumber { get; set; }
 
     /// <summary>
     /// Filter by organizational form code.
     /// </summary>
     [MaxLength(10, ErrorMessage = "Organization form cannot exceed 10 characters")]
-    public string? Organisasjonsform { get; set; }
+    public string? OrganizationForm { get; set; }
 
     /// <summary>
     /// Page number (1-based).

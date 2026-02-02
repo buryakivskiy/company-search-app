@@ -7,12 +7,12 @@ using Microsoft.Extensions.Options;
 
 namespace api.Features.CompanySearch.Clients;
 
-public class BrønnøysundClient : ICompanySearchClient
+public class NorwegianBusinessRegisterClient : ICompanySearchClient
 {
     private readonly HttpClient _httpClient;
-    private readonly BrønnøysundApiConfiguration _config;
+    private readonly NorwegianBusinessRegisterApiConfiguration _config;
 
-    public BrønnøysundClient(HttpClient httpClient, IOptions<BrønnøysundApiConfiguration> config)
+    public NorwegianBusinessRegisterClient(HttpClient httpClient, IOptions<NorwegianBusinessRegisterApiConfiguration> config)
     {
         _httpClient = httpClient;
         _config = config.Value;
@@ -20,7 +20,7 @@ public class BrønnøysundClient : ICompanySearchClient
         _httpClient.DefaultRequestHeaders.Add("User-Agent", "CompanySearchApp/1.0");
     }
 
-    public async Task<BrønnøysundResponse> SearchCompaniesAsync(CompanySearchRequest request)
+    public async Task<NorwegianBusinessRegisterResponse> SearchCompaniesAsync(CompanySearchRequest request)
     {
         try
         {
@@ -29,11 +29,11 @@ public class BrønnøysundClient : ICompanySearchClient
             if (!string.IsNullOrEmpty(request.Name))
                 query["navn"] = request.Name;
 
-            if (!string.IsNullOrEmpty(request.Organisasjonsnummer))
-                query["organisasjonsnummer"] = request.Organisasjonsnummer;
+            if (!string.IsNullOrEmpty(request.OrganizationNumber))
+                query["organisasjonsnummer"] = request.OrganizationNumber;
 
-            if (!string.IsNullOrEmpty(request.Organisasjonsform))
-                query["organisasjonsform"] = request.Organisasjonsform;
+            if (!string.IsNullOrEmpty(request.OrganizationForm))
+                query["organisasjonsform"] = request.OrganizationForm;
 
             query["page"] = request.Page.ToString();
             query["size"] = request.Size.ToString();
@@ -44,14 +44,14 @@ public class BrønnøysundClient : ICompanySearchClient
             response.EnsureSuccessStatusCode();
 
         var json = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<BrønnøysundResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var result = JsonSerializer.Deserialize<NorwegianBusinessRegisterResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-        return result ?? new BrønnøysundResponse();
+        return result ?? new NorwegianBusinessRegisterResponse();
         }
         catch (HttpRequestException ex)
         {
             // Log error or handle
-            throw new Exception("Error calling Brønnøysund API", ex);
+            throw new Exception("Error calling Norwegian Business Register API", ex);
         }
         catch (JsonException ex)
         {

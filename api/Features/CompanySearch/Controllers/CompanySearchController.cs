@@ -23,7 +23,7 @@ public class CompanySearchController : ControllerBase
     /// </summary>
     /// <param name="request">Search parameters including required organization number, optional name and form, 1-based page and size (1-50).</param>
     /// <returns>A paginated list of companies matching the search criteria.</returns>
-    [HttpGet("search")]
+    [HttpGet()]
     [ProducesResponseType(typeof(CompanySearchResponse), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
