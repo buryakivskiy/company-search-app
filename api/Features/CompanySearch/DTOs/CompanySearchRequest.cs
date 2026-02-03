@@ -15,12 +15,6 @@ public class CompanySearchRequest
     public string? Query { get; set; }
 
     /// <summary>
-    /// Filter by organizational form code (applies only when searching external register).
-    /// </summary>
-    [MaxLength(10, ErrorMessage = "Organization form cannot exceed 10 characters")]
-    public string? OrganizationForm { get; set; }
-
-    /// <summary>
     /// Page number (1-based).
     /// </summary>
     [Range(1, int.MaxValue, ErrorMessage = "Page must be >= 1")]

@@ -32,9 +32,6 @@ public class NorwegianBusinessRegisterClient : ICompanySearchClient
             if (!string.IsNullOrEmpty(request.OrganizationNumber))
                 query["organisasjonsnummer"] = request.OrganizationNumber;
 
-            if (!string.IsNullOrEmpty(request.OrganizationForm))
-                query["organisasjonsform"] = request.OrganizationForm;
-
             // external API expects 0-based page and "size" parameter
             query["page"] = request.Page.ToString();
             query["size"] = request.PageSize.ToString();

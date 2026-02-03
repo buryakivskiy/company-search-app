@@ -33,7 +33,6 @@ public class CompanySearchService : ICompanySearchService
         {
             Name = name,
             OrganizationNumber = orgNumber,
-            OrganizationForm = request.OrganizationForm,
             Page = request.Page - 1, // external API is 0-based
             PageSize = request.PageSize
         };

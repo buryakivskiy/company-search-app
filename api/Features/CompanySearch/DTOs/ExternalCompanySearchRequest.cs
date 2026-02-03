@@ -7,7 +7,6 @@ public class ExternalCompanySearchRequest
 {
     public string? Name { get; set; }
     public string? OrganizationNumber { get; set; }
-    public string? OrganizationForm { get; set; }
     public int Page { get; set; }
     public int PageSize { get; set; }
 }
