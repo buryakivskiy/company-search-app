@@ -8,15 +8,10 @@ namespace api.Features.Companies.DTOs;
 public class CompanySearchRequest
 {
     /// <summary>
-    /// Partial or full company name to match.
+    /// Search query: either name (partial match) or exact 9-digit organization number.
     /// </summary>
-    public string? Name { get; set; }
-
-    /// <summary>
-    /// Exact organization number to match (9 digits).
-    /// </summary>
-    [RegularExpression(@"^\d{9}$", ErrorMessage = "Organization number must be exactly 9 digits")]
-    public string? OrganizationNumber { get; set; }
+    [MaxLength(200, ErrorMessage = "Query cannot exceed 200 characters")]
+    public string? Query { get; set; }
 
     /// <summary>
     /// Page number (1-based).

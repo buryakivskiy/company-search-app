@@ -10,7 +10,7 @@ public interface ICompanySearchClient
     /// <summary>
     /// Searches for companies based on the provided request parameters.
     /// </summary>
-    /// <param name="request">The search request containing filters.</param>
+    /// <param name="request">The search request containing filters for the external API.</param>
     /// <returns>The full response from the API including companies and pagination.</returns>
-    Task<NorwegianBusinessRegisterResponse> SearchCompaniesAsync(CompanySearchRequest request);
+    Task<NorwegianBusinessRegisterResponse> SearchCompaniesAsync(ExternalCompanySearchRequest request);
 }

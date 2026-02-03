@@ -67,7 +67,18 @@ public class CompanyService : ICompanyService
 
     public async Task<CompanySearchResponse> SearchAsync(CompanySearchRequest request)
     {
-        var (items, total) = await _repo.SearchAsync(request.Name, request.OrganizationNumber, request.Page, request.PageSize);
+        string? name = null;
+        string? orgNumber = null;
+        if (!string.IsNullOrWhiteSpace(request.Query))
+        {
+            var q = request.Query.Trim();
+            if (System.Text.RegularExpressions.Regex.IsMatch(q, "^\\d{9}$"))
+                orgNumber = q;
+            else
+                name = q;
+        }
+
+        var (items, total) = await _repo.SearchAsync(name, orgNumber, request.Page, request.PageSize);
 
         var dtos = items.Select(s => new CompanyResponse
         {

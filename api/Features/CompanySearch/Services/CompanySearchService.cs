@@ -17,12 +17,24 @@ public class CompanySearchService : ICompanySearchService
     public async Task<CompanySearchResponse> SearchCompaniesAsync(CompanySearchRequest request)
     {
         // Prepare request for external API (external API expects 0-based page and parameter name "size").
-        var apiRequest = new CompanySearchRequest
+        // Convert single `Query` into either Name or OrganizationNumber for the external API
+        string? name = null;
+        string? orgNumber = null;
+        if (!string.IsNullOrWhiteSpace(request.Query))
         {
-            Name = request.Name,
-            OrganizationNumber = request.OrganizationNumber,
+            var q = request.Query.Trim();
+            if (System.Text.RegularExpressions.Regex.IsMatch(q, "^\\d{9}$"))
+                orgNumber = q;
+            else
+                name = q;
+        }
+
+        var apiRequest = new ExternalCompanySearchRequest
+        {
+            Name = name,
+            OrganizationNumber = orgNumber,
             OrganizationForm = request.OrganizationForm,
-            Page = request.Page - 1, // Convert to 0-based for external API
+            Page = request.Page - 1, // external API is 0-based
             PageSize = request.PageSize
         };
 

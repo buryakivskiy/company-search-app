@@ -20,7 +20,7 @@ public class NorwegianBusinessRegisterClient : ICompanySearchClient
         _httpClient.DefaultRequestHeaders.Add("User-Agent", "CompanySearchApp/1.0");
     }
 
-    public async Task<NorwegianBusinessRegisterResponse> SearchCompaniesAsync(CompanySearchRequest request)
+    public async Task<NorwegianBusinessRegisterResponse> SearchCompaniesAsync(ExternalCompanySearchRequest request)
     {
         try
         {
@@ -44,10 +44,10 @@ public class NorwegianBusinessRegisterClient : ICompanySearchClient
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
-        var json = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<NorwegianBusinessRegisterResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var json = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<NorwegianBusinessRegisterResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-        return result ?? new NorwegianBusinessRegisterResponse();
+            return result ?? new NorwegianBusinessRegisterResponse();
         }
         catch (HttpRequestException ex)
         {
