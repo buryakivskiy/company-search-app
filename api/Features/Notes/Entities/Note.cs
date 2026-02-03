@@ -8,6 +8,5 @@ public class Note
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    // Navigation property to the company
     public api.Features.Companies.Entities.SavedCompany? Company { get; set; }
 }
