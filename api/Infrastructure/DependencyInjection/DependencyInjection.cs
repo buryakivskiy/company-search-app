@@ -25,6 +25,10 @@ public static class DependencyInjection
         services.AddScoped<api.Features.Companies.Interfaces.ICompanyRepository, api.Features.Companies.Repositories.CompanyRepository>();
         services.AddScoped<api.Features.Companies.Interfaces.ICompanyService, api.Features.Companies.Services.CompanyService>();
 
+        // Notes
+        services.AddScoped<api.Features.Notes.Interfaces.ICompanyNoteRepository, api.Features.Notes.Repositories.CompanyNoteRepository>();
+        services.AddScoped<api.Features.Notes.Interfaces.ICompanyNoteService, api.Features.Notes.Services.CompanyNoteService>();
+
         // Swagger/OpenAPI
         services.AddSwaggerGen(c =>
         {

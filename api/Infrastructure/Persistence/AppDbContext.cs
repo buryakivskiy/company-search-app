@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<api.Features.Companies.Entities.SavedCompany> Companies { get; set; } = null!;
+    public DbSet<api.Features.Notes.Entities.Note> Notes { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

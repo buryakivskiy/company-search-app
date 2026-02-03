@@ -7,4 +7,6 @@ public class SavedCompany
     public string Name { get; set; } = null!;
     public string? Address { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    public api.Features.Notes.Entities.Note? Note { get; set; }
 }
