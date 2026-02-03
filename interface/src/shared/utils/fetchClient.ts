@@ -53,7 +53,16 @@ class FetchClient {
         throw new Error(JSON.stringify(error));
       }
 
-      return await response.json();
+      if (response.status === 204) {
+        return undefined as T;
+      }
+
+      const text = await response.text();
+      if (!text) {
+        return undefined as T;
+      }
+
+      return JSON.parse(text) as T;
     } catch (error) {
       clearTimeout(timeoutId);
       if (error instanceof Error) {
