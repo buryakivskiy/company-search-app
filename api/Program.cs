@@ -1,4 +1,5 @@
 using api.Infrastructure.DependencyInjection;
+using api.Infrastructure.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,9 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Global exception handling middleware
+app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
