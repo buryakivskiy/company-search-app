@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useCompanies } from '../hooks/useCompanies';
+import { useCompanyContext } from '@/shared/contexts/CompanyContext';
 
 export function SavedCompaniesSection() {
   const { companies, isLoading, error, fetchCompanies, removeCompany } = useCompanies();
   const [expandedCompanyId, setExpandedCompanyId] = useState<string | null>(null);
+  const { selectSavedCompany, notifyCompanyDeleted } = useCompanyContext();
 
   useEffect(() => {
     fetchCompanies();
@@ -24,11 +26,7 @@ export function SavedCompaniesSection() {
     if (window.confirm(`Er du sikker på at du vil slette "${companyName}"?`)) {
       try {
         await removeCompany(id);
-        window.dispatchEvent(
-          new CustomEvent('company-deleted', {
-            detail: { id },
-          })
-        );
+        notifyCompanyDeleted(id);
       } catch (err) {
         console.error('Failed to delete company:', err);
       }
@@ -37,19 +35,6 @@ export function SavedCompaniesSection() {
 
   const toggleExpand = (id: string) => {
     setExpandedCompanyId(expandedCompanyId === id ? null : id);
-  };
-
-  const handleSelectCompany = (company: { id: string; name: string; organizationNumber: string; address?: string }) => {
-    window.dispatchEvent(
-      new CustomEvent('company-selected', {
-        detail: {
-          id: company.id,
-          name: company.name,
-          organizationNumber: company.organizationNumber,
-          address: company.address,
-        },
-      })
-    );
   };
 
   return (
@@ -79,7 +64,7 @@ export function SavedCompaniesSection() {
                 className="flex-1 cursor-pointer"
                 onClick={() => {
                   toggleExpand(company.id);
-                  handleSelectCompany(company);
+                  selectSavedCompany(company);
                 }}
               >
                 <h3 className="font-bold text-lg">{company.name}</h3>

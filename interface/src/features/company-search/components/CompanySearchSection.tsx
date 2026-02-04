@@ -3,78 +3,24 @@ import { useCompanySearch } from '../hooks/useCompanySearch';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { useCompanies } from '@/features/companies/hooks/useCompanies';
 import { useNote } from '@/features/notes/hooks/useNote';
-import type { Company } from '../types';
+import { useCompanyContext } from '@/shared/contexts/CompanyContext';
 
 export function CompanySearchSection() {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebounce(searchQuery, 500);
   const { companies, isLoading, error, search } = useCompanySearch();
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [noteText, setNoteText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const { createNewCompany } = useCompanies();
-  const { note, isLoading: isLoadingNote, fetchNote, saveNote, reset: resetNote } = useNote();
+  const { note, isLoading: isLoadingNote, saveNote, reset: resetNote } = useNote();
+  const { selectedCompany, selectedCompanyId, selectSearchCompany, clearSelection } = useCompanyContext();
 
   useEffect(() => {
     if (debouncedQuery) {
       search(debouncedQuery);
     }
   }, [debouncedQuery, search]);
-
-  useEffect(() => {
-    const handleCompanySelected = (event: Event) => {
-      const customEvent = event as CustomEvent<{
-        id: string;
-        name: string;
-        organizationNumber: string;
-        address?: string;
-      }>;
-
-      const detail = customEvent.detail;
-      if (!detail) return;
-
-      setSelectedCompany({
-        organizationNumber: detail.organizationNumber,
-        name: detail.name,
-        businessAddress: detail.address ? { city: detail.address } : undefined,
-        registeredInVatRegister: false,
-        bankrupt: false,
-        underLiquidation: false,
-        underCompulsoryLiquidationOrDissolution: false,
-      });
-      setSelectedCompanyId(detail.id);
-      setSaveMessage(null);
-      fetchNote(detail.id);
-    };
-
-    window.addEventListener('company-selected', handleCompanySelected);
-    return () => {
-      window.removeEventListener('company-selected', handleCompanySelected);
-    };
-  }, [fetchNote]);
-
-  useEffect(() => {
-    const handleCompanyDeleted = (event: Event) => {
-      const customEvent = event as CustomEvent<{ id: string }>;
-      const deletedId = customEvent.detail?.id;
-      if (!deletedId) return;
-
-      if (selectedCompanyId === deletedId) {
-        setSelectedCompany(null);
-        setSelectedCompanyId(null);
-        setNoteText('');
-        setSaveMessage(null);
-        resetNote();
-      }
-    };
-
-    window.addEventListener('company-deleted', handleCompanyDeleted);
-    return () => {
-      window.removeEventListener('company-deleted', handleCompanyDeleted);
-    };
-  }, [resetNote, selectedCompanyId]);
 
   useEffect(() => {
     if (selectedCompanyId) {
@@ -110,8 +56,7 @@ export function CompanySearchSection() {
       }
 
       // Reset form
-      setSelectedCompany(null);
-      setSelectedCompanyId(null);
+      clearSelection();
       setNoteText('');
       setSearchQuery('');
       resetNote();
@@ -178,8 +123,7 @@ export function CompanySearchSection() {
               <div
                 key={company.organizationNumber}
                 onClick={() => {
-                  setSelectedCompany(company);
-                  setSelectedCompanyId(null);
+                  selectSearchCompany(company);
                   setNoteText('');
                   setSaveMessage(null);
                   resetNote();
@@ -219,8 +163,7 @@ export function CompanySearchSection() {
               <div className="flex gap-3 justify-end">
                 <button 
                   onClick={() => {
-                    setSelectedCompany(null);
-                    setSelectedCompanyId(null);
+                    clearSelection();
                     setNoteText('');
                     setSaveMessage(null);
                     resetNote();
