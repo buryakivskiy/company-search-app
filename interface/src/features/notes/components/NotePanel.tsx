@@ -24,7 +24,7 @@ export function NotePanel({
   onSave,
 }: NotePanelProps) {
   return (
-    <div className="bg-gray-100 border border-gray-300 rounded-lg p-6 min-h-80">
+    <div className="bg-gray-100 border border-gray-300 rounded-lg p-6 h-[520px] flex flex-col">
       {selectedCompany ? (
         <>
           <h3 className="font-bold text-gray-700 mb-2">{selectedCompany.name}</h3>
@@ -36,7 +36,7 @@ export function NotePanel({
             value={noteText}
             onChange={(e) => onNoteChange(e.target.value)}
             placeholder="Legg til notat om kunden her..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4 resize-none flex-1"
             rows={5}
           />
           <div className="flex gap-3 justify-end">

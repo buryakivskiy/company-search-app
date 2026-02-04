@@ -1,11 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useCompanies } from '../hooks/useCompanies';
 import { useCompanyContext } from '@/shared/contexts/CompanyContext';
+import { SearchInput } from '@/features/company-search/components/SearchInput';
 
 export function SavedCompaniesSection() {
   const { companies, isLoading, error, fetchCompanies, removeCompany } = useCompanies();
   const [expandedCompanyId, setExpandedCompanyId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const { selectSavedCompany, notifyCompanyDeleted } = useCompanyContext();
+
+  // Filter companies based on search query
+  const filteredCompanies = companies.filter((company) => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      company.name.toLowerCase().includes(query) ||
+      company.organizationNumber.includes(query) ||
+      company.address?.toLowerCase().includes(query)
+    );
+  });
 
   useEffect(() => {
     fetchCompanies();
@@ -41,6 +54,8 @@ export function SavedCompaniesSection() {
     <div className="bg-white rounded-lg p-8 shadow-sm">
       <h2 className="text-2xl font-bold mb-6">Mine kunder</h2>
       
+      <SearchInput value={searchQuery} onChange={setSearchQuery} />
+      
       {isLoading && (
         <div className="text-gray-500 text-center py-8">Laster kunder...</div>
       )}
@@ -53,8 +68,12 @@ export function SavedCompaniesSection() {
         <div className="text-gray-500 text-center py-8">Ingen lagrede kunder ennå</div>
       )}
 
+      {!isLoading && !error && companies.length > 0 && filteredCompanies.length === 0 && (
+        <div className="text-gray-500 text-center py-8">Ingen kunder funnet for søket</div>
+      )}
+
       <div className="space-y-3">
-        {companies.map((company) => (
+        {filteredCompanies.map((company) => (
           <div 
             key={company.id}
             className="bg-gray-100 border border-gray-300 rounded-lg overflow-hidden"

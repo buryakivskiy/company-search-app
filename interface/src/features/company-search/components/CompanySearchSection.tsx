@@ -9,15 +9,17 @@ import { useCompanySave } from '../hooks/useCompanySave';
 
 export function CompanySearchSection() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const debouncedQuery = useDebounce(searchQuery, 500);
-  const { companies, isLoading, error, search } = useCompanySearch();
+  const { companies, isLoading, error, hasNext, totalPages, search } = useCompanySearch();
   const [noteText, setNoteText] = useState('');
   const { isSaving, saveMessage, clearSaveMessage, saveCompany, note, isLoadingNote, resetNote } = useCompanySave();
   const { selectedCompany, selectedCompanyId, selectSearchCompany, clearSelection } = useCompanyContext();
 
   useEffect(() => {
     if (debouncedQuery) {
-      search(debouncedQuery);
+      setCurrentPage(1);
+      search(debouncedQuery, 1);
     }
   }, [debouncedQuery, search]);
 
@@ -26,6 +28,11 @@ export function CompanySearchSection() {
       setNoteText(note?.content ?? '');
     }
   }, [note, selectedCompanyId]);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    search(searchQuery, newPage);
+  };
 
   const handleSaveCompany = async () => {
     await saveCompany({
@@ -54,6 +61,9 @@ export function CompanySearchSection() {
           isLoading={isLoading}
           error={error}
           searchQuery={searchQuery}
+          currentPage={currentPage}
+          hasNext={hasNext}
+          totalPages={totalPages}
           selectedOrganizationNumber={selectedCompany?.organizationNumber}
           onSelectCompany={(company) => {
             selectSearchCompany(company);
@@ -61,6 +71,7 @@ export function CompanySearchSection() {
             clearSaveMessage();
             resetNote();
           }}
+          onPageChange={handlePageChange}
         />
 
         <NotePanel

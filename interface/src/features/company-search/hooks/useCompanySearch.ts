@@ -8,6 +8,7 @@ interface UseCompanySearchState {
   error: string | null;
   hasNext: boolean;
   totalItems: number;
+  totalPages: number;
 }
 
 interface UseCompanySearchReturn extends UseCompanySearchState {
@@ -25,6 +26,7 @@ export const useCompanySearch = (): UseCompanySearchReturn => {
     error: null,
     hasNext: false,
     totalItems: 0,
+    totalPages: 0,
   });
 
   const search = useCallback(async (query: string, page = 1) => {
@@ -36,13 +38,14 @@ export const useCompanySearch = (): UseCompanySearchReturn => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response: CompanySearchResponse = await searchCompanies(query, page, 10);
+      const response: CompanySearchResponse = await searchCompanies(query, page, 4);
       console.log('Search response:', response);
       setState((prev) => ({
         ...prev,
         companies: response.items || [],
         hasNext: response.hasNext || false,
         totalItems: response.totalItems || 0,
+        totalPages: response.totalPages || 0,
         isLoading: false,
       }));
     } catch (err) {
@@ -62,6 +65,7 @@ export const useCompanySearch = (): UseCompanySearchReturn => {
       error: null,
       hasNext: false,
       totalItems: 0,
+      totalPages: 0,
     });
   }, []);
 
