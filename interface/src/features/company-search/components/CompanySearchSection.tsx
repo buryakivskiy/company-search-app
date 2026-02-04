@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useCompanySearch } from '../hooks/useCompanySearch';
-import { useDebounce } from '@/shared/hooks/useDebounce';
 import { useCompanyContext } from '@/shared/contexts/CompanyContext';
 import { SearchInput } from './SearchInput';
 import { SearchResultsPanel } from './SearchResultsPanel';
@@ -10,18 +9,17 @@ import { useCompanySave } from '../hooks/useCompanySave';
 export function CompanySearchSection() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const debouncedQuery = useDebounce(searchQuery, 500);
   const { companies, isLoading, error, hasNext, totalPages, search } = useCompanySearch();
   const [noteText, setNoteText] = useState('');
   const { isSaving, saveMessage, clearSaveMessage, saveCompany, note, isLoadingNote, resetNote } = useCompanySave();
   const { selectedCompany, selectedCompanyId, selectSearchCompany, clearSelection } = useCompanyContext();
 
   useEffect(() => {
-    if (debouncedQuery) {
+    if (searchQuery.trim()) {
       setCurrentPage(1);
-      search(debouncedQuery, 1);
+      search(searchQuery, 1);
     }
-  }, [debouncedQuery, search]);
+  }, [searchQuery, search]);
 
   useEffect(() => {
     if (selectedCompanyId) {
@@ -42,7 +40,6 @@ export function CompanySearchSection() {
       onSuccess: () => {
         clearSelection();
         setNoteText('');
-        setSearchQuery('');
         resetNote();
       },
     });
@@ -55,7 +52,7 @@ export function CompanySearchSection() {
       <SearchInput value={searchQuery} onChange={setSearchQuery} />
 
       {/* Two columns */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-6 items-start">
         <SearchResultsPanel
           companies={companies}
           isLoading={isLoading}
