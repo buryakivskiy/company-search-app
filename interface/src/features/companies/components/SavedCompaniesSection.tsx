@@ -3,13 +3,17 @@ import { useCompanies } from '../hooks/useCompanies';
 import { useCompanyContext } from '@/shared/contexts/CompanyContext';
 import { SearchInput } from '@/features/company-search/components/SearchInput';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
-import { SAVED_COMPANIES_MESSAGES, SEARCH_MESSAGES } from '@/shared/constants/messages';
+import { SAVED_COMPANIES_MESSAGES } from '@/shared/constants/messages';
+import { SavedCompaniesList } from './SavedCompaniesList';
+import { SavedCompaniesPagination } from './SavedCompaniesPagination';
 
 export function SavedCompaniesSection() {
-  const { companies, isLoading, error, fetchCompanies, removeCompany } = useCompanies();
+  const { companies, isLoading, error, fetchCompanies, removeCompany, totalPages } = useCompanies();
   const [expandedCompanyId, setExpandedCompanyId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 4;
   const { selectSavedCompany, notifyCompanyDeleted } = useCompanyContext();
 
   // Filter companies based on search query
@@ -37,12 +41,12 @@ export function SavedCompaniesSection() {
   };
 
   useEffect(() => {
-    fetchCompanies();
-  }, [fetchCompanies]);
+    fetchCompanies(currentPage, PAGE_SIZE);
+  }, [fetchCompanies, currentPage]);
 
   useEffect(() => {
     const handleCompanySaved = () => {
-      fetchCompanies();
+      fetchCompanies(currentPage, PAGE_SIZE);
     };
 
     window.addEventListener('company-saved', handleCompanySaved);
@@ -56,6 +60,8 @@ export function SavedCompaniesSection() {
       try {
         await removeCompany(id);
         notifyCompanyDeleted(id);
+        // refresh current page after deletion
+        await fetchCompanies(currentPage, PAGE_SIZE);
       } catch (err) {
         console.error('Failed to delete company:', err);
       }
@@ -67,76 +73,57 @@ export function SavedCompaniesSection() {
   };
 
   return (
-    <div className="bg-white rounded-lg p-8 shadow-sm">
+    <div className="bg-white rounded-lg p-8 shadow-sm h-[720px] flex flex-col">
       <h2 className="text-2xl font-bold mb-6">{SAVED_COMPANIES_MESSAGES.TITLE}</h2>
       
       <SearchInput value={searchQuery} onChange={handleSearchChange} />
-      
-      {isLoading && (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner size="md" message={SAVED_COMPANIES_MESSAGES.LOADING} />
-        </div>
-      )}
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 my-4">
-          <div className="text-red-800 font-medium mb-1">{SAVED_COMPANIES_MESSAGES.ERROR}</div>
-          <div className="text-red-700 text-sm">{error}</div>
-        </div>
-      )}
-
-      {!isLoading && !error && isSearching && searchQuery && (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner size="md" message={SAVED_COMPANIES_MESSAGES.SEARCHING} />
-        </div>
-      )}
-
-      {!isLoading && !error && !isSearching && companies.length === 0 && (
-        <div className="text-gray-500 text-center py-8">{SAVED_COMPANIES_MESSAGES.EMPTY}</div>
-      )}
-
-      {!isLoading && !error && !isSearching && companies.length > 0 && filteredCompanies.length === 0 && (
-        <div className="text-gray-500 text-center py-8">{SAVED_COMPANIES_MESSAGES.NO_SEARCH_RESULTS}</div>
-      )}
-
-      <div className="space-y-3">
-        {filteredCompanies.map((company) => (
-          <div 
-            key={company.id}
-            className="bg-gray-100 border border-gray-300 rounded-lg overflow-hidden"
-          >
-            <div className="p-4 flex justify-between items-center">
-              <div 
-                className="flex-1 cursor-pointer"
-                onClick={() => {
-                  toggleExpand(company.id);
-                  selectSavedCompany(company);
-                }}
-              >
-                <h3 className="font-bold text-lg">{company.name}</h3>
-                <p className="text-sm text-gray-600">{SEARCH_MESSAGES.ORG_NR_LABEL} {company.organizationNumber}</p>
-                {company.address && (
-                  <p className="text-sm text-gray-500 mt-1">{company.address}</p>
-                )}
-              </div>
-              <button 
-                onClick={() => handleDelete(company.id, company.name)}
-                className="text-red-500 hover:text-red-700 px-3 py-1 text-sm font-medium"
-              >
-                {SAVED_COMPANIES_MESSAGES.DELETE_BUTTON}
-              </button>
-            </div>
-            
-            {expandedCompanyId === company.id && (
-              <div className="px-4 pb-4 pt-2 border-t border-gray-300 bg-gray-50">
-                <p className="text-sm text-gray-600">
-                  {SAVED_COMPANIES_MESSAGES.CREATED_AT} {new Date(company.createdAt).toLocaleDateString('nb-NO')}
-                </p>
-                {/* Future: Add note display here */}
-              </div>
-            )}
+      {/* Fixed-height flex container like SearchResultsPanel to avoid jumps */}
+      <div className="flex-1 flex flex-col min-h-0">
+        {isLoading && (
+          <div className="flex items-center justify-center h-full">
+            <LoadingSpinner size="md" message={SAVED_COMPANIES_MESSAGES.LOADING} />
           </div>
-        ))}
+        )}
+
+        {error && (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-red-500 text-sm text-center px-4">
+              <div className="font-medium mb-2">{SAVED_COMPANIES_MESSAGES.ERROR}</div>
+              <div>{error}</div>
+            </div>
+          </div>
+        )}
+
+        {!isLoading && !error && isSearching && searchQuery && (
+          <div className="flex items-center justify-center h-full">
+            <LoadingSpinner size="md" message={SAVED_COMPANIES_MESSAGES.SEARCHING} />
+          </div>
+        )}
+
+        {!isLoading && !error && companies.length === 0 && (
+          <div className="text-gray-500 text-center flex items-center justify-center h-full">{SAVED_COMPANIES_MESSAGES.EMPTY}</div>
+        )}
+
+        {!isLoading && !error && companies.length > 0 && filteredCompanies.length === 0 && (
+          <div className="text-gray-500 text-center flex items-center justify-center h-full">{SAVED_COMPANIES_MESSAGES.NO_SEARCH_RESULTS}</div>
+        )}
+
+        <SavedCompaniesList
+          companies={companies}
+          filteredCompanies={filteredCompanies}
+          expandedCompanyId={expandedCompanyId}
+          onToggleExpand={toggleExpand}
+          onSelect={selectSavedCompany}
+          onDelete={handleDelete}
+        />
+
+        {/* Pagination controls for saved companies (infer when backend doesn't return total) */}
+        <SavedCompaniesPagination
+          currentPage={currentPage}
+          setPage={setCurrentPage}
+          totalPages={totalPages}
+        />
       </div>
     </div>
   );

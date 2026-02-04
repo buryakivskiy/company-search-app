@@ -47,7 +47,6 @@ export const useCompanySearch = (): UseCompanySearchReturn => {
       // Ensure minimum loading time of 500ms for UI feedback
       await ensureMinimumLoadingTime(startTime);
       
-      console.log('Search response:', response);
       setState((prev) => ({
         ...prev,
         companies: response.items || [],

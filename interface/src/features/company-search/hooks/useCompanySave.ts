@@ -16,7 +16,7 @@ export function useCompanySave() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const { createNewCompany } = useCompanies();
-  const { note, isLoading: isLoadingNote, saveNote, reset: resetNote } = useNote();
+  const { note, isLoading: isLoadingNote, fetchNote, saveNote, reset: resetNote } = useNote();
 
   const clearSaveMessage = useCallback(() => {
     setSaveMessage(null);
@@ -82,6 +82,7 @@ export function useCompanySave() {
     saveCompany,
     note,
     isLoadingNote,
+    fetchNote,
     resetNote,
   };
 }

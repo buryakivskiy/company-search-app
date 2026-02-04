@@ -12,7 +12,7 @@ export function CompanySearchSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const { companies, isLoading, error, hasNext, totalPages, search } = useCompanySearch();
   const [noteText, setNoteText] = useState('');
-  const { isSaving, saveMessage, clearSaveMessage, saveCompany, note, isLoadingNote, resetNote } = useCompanySave();
+  const { isSaving, saveMessage, clearSaveMessage, saveCompany, note, isLoadingNote, fetchNote, resetNote } = useCompanySave();
   const { selectedCompany, selectedCompanyId, selectSearchCompany, clearSelection } = useCompanyContext();
 
   useEffect(() => {
@@ -21,6 +21,12 @@ export function CompanySearchSection() {
       search(searchQuery, 1);
     }
   }, [searchQuery, search]);
+
+  useEffect(() => {
+    if (selectedCompanyId) {
+      fetchNote(selectedCompanyId);
+    }
+  }, [selectedCompanyId, fetchNote]);
 
   useEffect(() => {
     if (selectedCompanyId) {

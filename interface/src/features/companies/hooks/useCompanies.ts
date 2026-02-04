@@ -7,7 +7,7 @@ import {
   deleteCompany,
 } from '../api/companies.api';
 import { ensureMinimumLoadingTime } from '@/shared/utils/loadingTime';
-import type { SavedCompany, CreateCompanyRequest, UpdateCompanyRequest } from '../types';
+import type { SavedCompany, CreateCompanyRequest, UpdateCompanyRequest, SavedCompanyesResponse } from '../types';
 
 interface UseCompaniesState {
   companies: SavedCompany[];
@@ -15,6 +15,9 @@ interface UseCompaniesState {
   isLoading: boolean;
   error: string | null;
   totalCount: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
 }
 
 interface UseCompaniesReturn extends UseCompaniesState {
@@ -36,35 +39,34 @@ export const useCompanies = (): UseCompaniesReturn => {
     isLoading: false,
     error: null,
     totalCount: 0,
+    totalPages: 0,
+    hasNext: false,
+    hasPrevious: false,
   });
 
   const fetchCompanies = useCallback(async (page = 1, pageSize = 10) => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
+    const startTime = Date.now();
     try {
-      const startTime = Date.now();
-      
-      // Ensure minimum UI feedback time - start with 50ms delay to let spinner render
-      await new Promise(resolve => setTimeout(resolve, 50));
-      
-      const response = await getCompanies(page, pageSize);
-      
-      // Ensure minimum loading time of 500ms total
+      // small delay so spinner can render
+      await new Promise((r) => setTimeout(r, 50));
+
+      const response: SavedCompanyesResponse = await getCompanies(page, pageSize);
       await ensureMinimumLoadingTime(startTime);
-      
+
       setState((prev) => ({
         ...prev,
         companies: response.items,
         totalCount: response.totalItems,
+        totalPages: response.totalPages,
+        hasNext: response.hasNext,
+        hasPrevious: response.hasPrevious,
         isLoading: false,
       }));
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch companies';
-      setState((prev) => ({
-        ...prev,
-        error: errorMessage,
-        isLoading: false,
-      }));
+      setState((prev) => ({ ...prev, error: errorMessage, isLoading: false }));
     }
   }, []);
 
@@ -165,6 +167,9 @@ export const useCompanies = (): UseCompaniesReturn => {
       isLoading: false,
       error: null,
       totalCount: 0,
+      totalPages: 0,
+      hasNext: false,
+      hasPrevious: false,
     });
   }, []);
 
