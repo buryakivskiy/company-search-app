@@ -1,22 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useCompanySearch } from '../hooks/useCompanySearch';
 import { useDebounce } from '@/shared/hooks/useDebounce';
-import { useCompanies } from '@/features/companies/hooks/useCompanies';
-import { useNote } from '@/features/notes/hooks/useNote';
 import { useCompanyContext } from '@/shared/contexts/CompanyContext';
 import { SearchInput } from './SearchInput';
 import { SearchResultsPanel } from './SearchResultsPanel';
 import { NotePanel } from '@/features/notes/components/NotePanel';
+import { useCompanySave } from '../hooks/useCompanySave';
 
 export function CompanySearchSection() {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebounce(searchQuery, 500);
   const { companies, isLoading, error, search } = useCompanySearch();
   const [noteText, setNoteText] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
-  const { createNewCompany } = useCompanies();
-  const { note, isLoading: isLoadingNote, saveNote, reset: resetNote } = useNote();
+  const { isSaving, saveMessage, clearSaveMessage, saveCompany, note, isLoadingNote, resetNote } = useCompanySave();
   const { selectedCompany, selectedCompanyId, selectSearchCompany, clearSelection } = useCompanyContext();
 
   useEffect(() => {
@@ -32,56 +28,17 @@ export function CompanySearchSection() {
   }, [note, selectedCompanyId]);
 
   const handleSaveCompany = async () => {
-    if (!selectedCompany) return;
-
-    setIsSaving(true);
-    setSaveMessage(null);
-    try {
-      if (selectedCompanyId) {
-        if (noteText.trim()) {
-          await saveNote(selectedCompanyId, { content: noteText });
-        }
-      } else {
-        // Create the company
-        const createdCompany = await createNewCompany({
-          organizationNumber: selectedCompany.organizationNumber,
-          name: selectedCompany.name,
-          address: selectedCompany.businessAddress?.city || undefined,
-        });
-
-        // Save the note if provided
-        if (noteText.trim()) {
-          await saveNote(createdCompany.id, { content: noteText });
-        }
-
-        // Notify saved list to refresh
-        window.dispatchEvent(new Event('company-saved'));
-      }
-
-      // Reset form
-      clearSelection();
-      setNoteText('');
-      setSearchQuery('');
-      resetNote();
-
-      setSaveMessage(null);
-    } catch (err) {
-      console.error('Failed to save company:', err);
-      let message = 'Feil ved lagring av kunde';
-      if (err instanceof Error) {
-        try {
-          const parsed = JSON.parse(err.message) as { message?: string };
-          if (parsed?.message) {
-            message = parsed.message;
-          }
-        } catch {
-          // ignore parse errors
-        }
-      }
-      setSaveMessage(message);
-    } finally {
-      setIsSaving(false);
-    }
+    await saveCompany({
+      selectedCompany,
+      selectedCompanyId,
+      noteText,
+      onSuccess: () => {
+        clearSelection();
+        setNoteText('');
+        setSearchQuery('');
+        resetNote();
+      },
+    });
   };
 
   return (
@@ -101,7 +58,7 @@ export function CompanySearchSection() {
           onSelectCompany={(company) => {
             selectSearchCompany(company);
             setNoteText('');
-            setSaveMessage(null);
+            clearSaveMessage();
             resetNote();
           }}
         />
@@ -117,7 +74,7 @@ export function CompanySearchSection() {
           onCancel={() => {
             clearSelection();
             setNoteText('');
-            setSaveMessage(null);
+            clearSaveMessage();
             resetNote();
           }}
           onSave={handleSaveCompany}
