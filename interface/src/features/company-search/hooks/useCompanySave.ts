@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react';
 import { useCompanies } from '@/features/companies/hooks/useCompanies';
 import { useNote } from '@/features/notes/hooks/useNote';
+import { ensureMinimumLoadingTime } from '@/shared/utils/loadingTime';
+import { ERROR_MESSAGES } from '@/shared/constants/messages';
 import type { Company } from '../types';
 
 interface SaveCompanyParams {
@@ -28,6 +30,8 @@ export function useCompanySave() {
       setSaveMessage(null);
 
       try {
+        const startTime = Date.now();
+        
         if (selectedCompanyId) {
           if (noteText.trim()) {
             await saveNote(selectedCompanyId, { content: noteText });
@@ -46,11 +50,13 @@ export function useCompanySave() {
           window.dispatchEvent(new Event('company-saved'));
         }
 
+        await ensureMinimumLoadingTime(startTime, 200);
+
         onSuccess?.();
         setSaveMessage(null);
       } catch (err) {
         console.error('Failed to save company:', err);
-        let message = 'Feil ved lagring av kunde';
+        let message: string = ERROR_MESSAGES.SAVE_COMPANY_ERROR;
         if (err instanceof Error) {
           try {
             const parsed = JSON.parse(err.message) as { message?: string };

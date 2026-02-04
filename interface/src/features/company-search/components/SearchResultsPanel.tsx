@@ -1,4 +1,6 @@
 import type { Company } from '../types';
+import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
+import { SEARCH_MESSAGES } from '@/shared/constants/messages';
 
 interface SearchResultsPanelProps {
   companies: Company[];
@@ -27,24 +29,31 @@ export function SearchResultsPanel({
 }: SearchResultsPanelProps) {
   return (
     <div className="bg-gray-100 border border-gray-300 rounded-lg p-6 h-[520px] flex flex-col">
-      <h3 className="font-bold text-gray-700 mb-4">Søkeresultater fra Brønnøysund</h3>
+      <h3 className="font-bold text-gray-700 mb-4">{SEARCH_MESSAGES.SEARCH_RESULTS_TITLE}</h3>
 
       {/* Fixed height container for all states */}
       <div className="flex-1 flex flex-col min-h-0">
         {isLoading && (
-          <div className="text-gray-500 text-center flex items-center justify-center h-full">Søker...</div>
+          <div className="flex items-center justify-center h-full">
+            <LoadingSpinner size="md" message={SEARCH_MESSAGES.SEARCHING} />
+          </div>
         )}
 
         {error && (
-          <div className="text-red-500 text-sm flex items-center justify-center h-full">{error}</div>
+          <div className="flex items-center justify-center h-full">
+            <div className="text-red-500 text-sm text-center px-4">
+              <div className="font-medium mb-2">{SEARCH_MESSAGES.SEARCH_ERROR}</div>
+              <div>{error}</div>
+            </div>
+          </div>
         )}
 
         {!isLoading && !error && companies.length === 0 && searchQuery && (
-          <div className="text-gray-500 text-center flex items-center justify-center h-full">Ingen resultater funnet</div>
+          <div className="text-gray-500 text-center flex items-center justify-center h-full">{SEARCH_MESSAGES.NO_RESULTS}</div>
         )}
 
         {!isLoading && !error && companies.length === 0 && !searchQuery && (
-          <div className="text-gray-500 text-center flex items-center justify-center h-full">Skriv inn firmanavn for å søke</div>
+          <div className="text-gray-500 text-center flex items-center justify-center h-full">{SEARCH_MESSAGES.EMPTY_SEARCH}</div>
         )}
 
         {!isLoading && !error && companies.length > 0 && (
@@ -61,7 +70,7 @@ export function SearchResultsPanel({
                   }`}
                 >
                   <div className="font-semibold text-gray-900 text-sm">{company.name}</div>
-                  <div className="text-xs text-gray-600">Org.nr: {company.organizationNumber}</div>
+                  <div className="text-xs text-gray-600">{SEARCH_MESSAGES.ORG_NR_LABEL} {company.organizationNumber}</div>
                   {company.businessAddress?.city && (
                     <div className="text-xs text-gray-500">{company.businessAddress.city}</div>
                   )}
@@ -77,15 +86,15 @@ export function SearchResultsPanel({
                   disabled={currentPage === 1}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Forrige
+                  {SEARCH_MESSAGES.PREVIOUS_BUTTON}
                 </button>
-                <span className="text-sm text-gray-600">Side {currentPage} av {totalPages}</span>
+                <span className="text-sm text-gray-600">{SEARCH_MESSAGES.PAGE_OF} {currentPage} av {totalPages}</span>
                 <button
                   onClick={() => onPageChange(currentPage + 1)}
                   disabled={!hasNext}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Neste
+                  {SEARCH_MESSAGES.NEXT_BUTTON}
                 </button>
               </div>
             )}

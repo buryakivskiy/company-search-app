@@ -4,6 +4,7 @@ import {
   saveNoteForCompany,
   deleteNoteForCompany,
 } from '../api/notes.api';
+import { ensureMinimumLoadingTime } from '@/shared/utils/loadingTime';
 import type { Note, CreateOrUpdateNoteRequest } from '../types';
 
 interface UseNoteState {
@@ -35,7 +36,12 @@ export const useNote = (): UseNoteReturn => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
+      const startTime = Date.now();
       const note = await getNoteForCompany(companyId);
+      
+      // Ensure minimum loading time of 500ms
+      await ensureMinimumLoadingTime(startTime);
+      
       setState((prev) => ({
         ...prev,
         note,

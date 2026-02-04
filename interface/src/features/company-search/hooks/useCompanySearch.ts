@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { searchCompanies } from '../api/companySearch.api';
+import { ensureMinimumLoadingTime } from '@/shared/utils/loadingTime';
 import type { Company, CompanySearchResponse } from '../types';
 
 interface UseCompanySearchState {
@@ -38,7 +39,14 @@ export const useCompanySearch = (): UseCompanySearchReturn => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
+      const startTime = Date.now();
+      
+      // Fetch data
       const response: CompanySearchResponse = await searchCompanies(query, page, 4);
+      
+      // Ensure minimum loading time of 500ms for UI feedback
+      await ensureMinimumLoadingTime(startTime);
+      
       console.log('Search response:', response);
       setState((prev) => ({
         ...prev,

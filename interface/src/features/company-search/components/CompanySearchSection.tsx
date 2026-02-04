@@ -5,6 +5,7 @@ import { SearchInput } from './SearchInput';
 import { SearchResultsPanel } from './SearchResultsPanel';
 import { NotePanel } from '@/features/notes/components/NotePanel';
 import { useCompanySave } from '../hooks/useCompanySave';
+import { COMPANY_SEARCH_SECTION } from '@/shared/constants/messages';
 
 export function CompanySearchSection() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,7 +48,7 @@ export function CompanySearchSection() {
 
   return (
     <div className="bg-white rounded-lg p-8 shadow-sm">
-      <h2 className="text-2xl font-bold mb-6">Legg til ny kunde</h2>
+      <h2 className="text-2xl font-bold mb-6">{COMPANY_SEARCH_SECTION.TITLE}</h2>
       
       <SearchInput value={searchQuery} onChange={setSearchQuery} />
 

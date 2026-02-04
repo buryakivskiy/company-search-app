@@ -6,6 +6,7 @@ import {
   updateCompany,
   deleteCompany,
 } from '../api/companies.api';
+import { ensureMinimumLoadingTime } from '@/shared/utils/loadingTime';
 import type { SavedCompany, CreateCompanyRequest, UpdateCompanyRequest } from '../types';
 
 interface UseCompaniesState {
@@ -41,7 +42,16 @@ export const useCompanies = (): UseCompaniesReturn => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
+      const startTime = Date.now();
+      
+      // Ensure minimum UI feedback time - start with 50ms delay to let spinner render
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
       const response = await getCompanies(page, pageSize);
+      
+      // Ensure minimum loading time of 500ms total
+      await ensureMinimumLoadingTime(startTime);
+      
       setState((prev) => ({
         ...prev,
         companies: response.items,

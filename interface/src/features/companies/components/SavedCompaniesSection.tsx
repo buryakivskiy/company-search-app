@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react';
 import { useCompanies } from '../hooks/useCompanies';
 import { useCompanyContext } from '@/shared/contexts/CompanyContext';
 import { SearchInput } from '@/features/company-search/components/SearchInput';
+import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
+import { SAVED_COMPANIES_MESSAGES, SEARCH_MESSAGES } from '@/shared/constants/messages';
 
 export function SavedCompaniesSection() {
   const { companies, isLoading, error, fetchCompanies, removeCompany } = useCompanies();
   const [expandedCompanyId, setExpandedCompanyId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const { selectSavedCompany, notifyCompanyDeleted } = useCompanyContext();
 
   // Filter companies based on search query
@@ -19,6 +22,19 @@ export function SavedCompaniesSection() {
       company.address?.toLowerCase().includes(query)
     );
   });
+
+  // Handle search with loading indicator
+  const handleSearchChange = async (value: string) => {
+    setSearchQuery(value);
+    if (value.trim()) {
+      setIsSearching(true);
+      // Simulate search delay for UI feedback
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setIsSearching(false);
+    } else {
+      setIsSearching(false);
+    }
+  };
 
   useEffect(() => {
     fetchCompanies();
@@ -36,7 +52,7 @@ export function SavedCompaniesSection() {
   }, [fetchCompanies]);
 
   const handleDelete = async (id: string, companyName: string) => {
-    if (window.confirm(`Er du sikker på at du vil slette "${companyName}"?`)) {
+    if (window.confirm(SAVED_COMPANIES_MESSAGES.CONFIRM_DELETE.replace('{companyName}', companyName))) {
       try {
         await removeCompany(id);
         notifyCompanyDeleted(id);
@@ -52,24 +68,35 @@ export function SavedCompaniesSection() {
 
   return (
     <div className="bg-white rounded-lg p-8 shadow-sm">
-      <h2 className="text-2xl font-bold mb-6">Mine kunder</h2>
+      <h2 className="text-2xl font-bold mb-6">{SAVED_COMPANIES_MESSAGES.TITLE}</h2>
       
-      <SearchInput value={searchQuery} onChange={setSearchQuery} />
+      <SearchInput value={searchQuery} onChange={handleSearchChange} />
       
       {isLoading && (
-        <div className="text-gray-500 text-center py-8">Laster kunder...</div>
+        <div className="flex justify-center py-12">
+          <LoadingSpinner size="md" message={SAVED_COMPANIES_MESSAGES.LOADING} />
+        </div>
       )}
 
       {error && (
-        <div className="text-red-500 text-sm py-4">{error}</div>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 my-4">
+          <div className="text-red-800 font-medium mb-1">{SAVED_COMPANIES_MESSAGES.ERROR}</div>
+          <div className="text-red-700 text-sm">{error}</div>
+        </div>
       )}
 
-      {!isLoading && !error && companies.length === 0 && (
-        <div className="text-gray-500 text-center py-8">Ingen lagrede kunder ennå</div>
+      {!isLoading && !error && isSearching && searchQuery && (
+        <div className="flex justify-center py-12">
+          <LoadingSpinner size="md" message={SAVED_COMPANIES_MESSAGES.SEARCHING} />
+        </div>
       )}
 
-      {!isLoading && !error && companies.length > 0 && filteredCompanies.length === 0 && (
-        <div className="text-gray-500 text-center py-8">Ingen kunder funnet for søket</div>
+      {!isLoading && !error && !isSearching && companies.length === 0 && (
+        <div className="text-gray-500 text-center py-8">{SAVED_COMPANIES_MESSAGES.EMPTY}</div>
+      )}
+
+      {!isLoading && !error && !isSearching && companies.length > 0 && filteredCompanies.length === 0 && (
+        <div className="text-gray-500 text-center py-8">{SAVED_COMPANIES_MESSAGES.NO_SEARCH_RESULTS}</div>
       )}
 
       <div className="space-y-3">
@@ -87,7 +114,7 @@ export function SavedCompaniesSection() {
                 }}
               >
                 <h3 className="font-bold text-lg">{company.name}</h3>
-                <p className="text-sm text-gray-600">Org.nr: {company.organizationNumber}</p>
+                <p className="text-sm text-gray-600">{SEARCH_MESSAGES.ORG_NR_LABEL} {company.organizationNumber}</p>
                 {company.address && (
                   <p className="text-sm text-gray-500 mt-1">{company.address}</p>
                 )}
@@ -96,14 +123,14 @@ export function SavedCompaniesSection() {
                 onClick={() => handleDelete(company.id, company.name)}
                 className="text-red-500 hover:text-red-700 px-3 py-1 text-sm font-medium"
               >
-                Slett
+                {SAVED_COMPANIES_MESSAGES.DELETE_BUTTON}
               </button>
             </div>
             
             {expandedCompanyId === company.id && (
               <div className="px-4 pb-4 pt-2 border-t border-gray-300 bg-gray-50">
                 <p className="text-sm text-gray-600">
-                  Lagt til: {new Date(company.createdAt).toLocaleDateString('nb-NO')}
+                  {SAVED_COMPANIES_MESSAGES.CREATED_AT} {new Date(company.createdAt).toLocaleDateString('nb-NO')}
                 </p>
                 {/* Future: Add note display here */}
               </div>
