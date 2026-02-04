@@ -6,10 +6,10 @@ A full-stack web application for searching and managing Norwegian companies. Bui
 
 This application allows users to:
 - **Search** for companies in the Norwegian Business Register (Brønnøysundregisteret)
-- **Save** companies to a local database with pagination support
+- **Save** companies to a local database
 - **Add notes** to saved companies for internal reference
 - **Delete** company records and associated notes
-- **Filter** saved companies by name, organization number, or address
+- **Filter** saved companies by name or organization number
 
 The application integrates with the public [Brønnøysundregisteret API](https://data.brreg.no/enhetsregisteret/api/) for real-time company data and maintains a local PostgreSQL database for user-specific data (saved companies and notes).
 
@@ -242,14 +242,16 @@ The backend exposes the following REST endpoints:
 
 ## Time Spent
 
-Approximate breakdown for this skill test:
+**Total: ~15 hours**
 
-| Phase | Time | Notes |
-|-------|------|-------|
-| **Planning & Architecture** | 2.5h | Database schema, API design, frontend structure, component hierarchy |
-| **Backend Implementation** | 3.5h | Controllers, services, repositories, EF Core configuration, Brønnøysund integration, migrations |
-| **Frontend Implementation** | 5h | React components, custom hooks, Context setup, state management, Tailwind styling |
-| **Testing & Debugging** | 2h | CORS fixes, HTTP method corrections, type mismatches, UI layout fixes |
-| **Refactoring & Polish** | 2h | Component splitting, hook extraction, constants centralization, loading states, documentation |
-| **Documentation** | 1h | README, architecture docs, code comments |
-| **Total** | ~15.5h | |
+- **Planning & Architecture** (1h) - Database schema, API contracts, component hierarchy, folder structure
+- **Backend: Company Search** (1.25h) - Controller, service, Brønnøysund API client, search logic
+- **Backend: Saved Companies** (1.5h) - CRUD endpoints, repository pattern, database operations
+- **Backend: Notes** (1h) - Service, one-to-one relationship, cascade delete configuration
+- **Frontend: Company Search** (1.25h) - SearchInput, SearchResultsPanel components, pagination UI
+- **Frontend: Saved Companies** (1.5h) - SavedCompaniesSection component, local filtering/search
+- **Frontend: Notes** (1h) - NotePanel component, note editing UI
+- **Frontend: Custom Hooks** (1.5h) - useCompanySearch, useCompanies, useNote, business logic extraction
+- **Infrastructure** (1h) - React Context (CompanyContext), API client wrapper, DependencyInjection, entity models, migrations
+- **Testing & Debugging** (2h) - CORS fixes, HTTP method corrections, TypeScript type issues, layout/pagination fixes
+- **Documentation & Styling** (1.5h) - README, architecture docs, Tailwind CSS, LoadingSpinner, minimum loading time utility
