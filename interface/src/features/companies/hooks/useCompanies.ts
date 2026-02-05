@@ -21,7 +21,7 @@ interface UseCompaniesState {
 }
 
 interface UseCompaniesReturn extends UseCompaniesState {
-  fetchCompanies: (page?: number, pageSize?: number) => Promise<void>;
+  fetchCompanies: (page?: number, pageSize?: number, query?: string) => Promise<void>;
   fetchCompanyById: (id: string) => Promise<void>;
   createNewCompany: (data: CreateCompanyRequest) => Promise<SavedCompany>;
   updateExistingCompany: (id: string, data: UpdateCompanyRequest) => Promise<SavedCompany>;
@@ -44,7 +44,7 @@ export const useCompanies = (): UseCompaniesReturn => {
     hasPrevious: false,
   });
 
-  const fetchCompanies = useCallback(async (page = 1, pageSize = 10) => {
+  const fetchCompanies = useCallback(async (page = 1, pageSize = 10, query?: string) => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     const startTime = Date.now();
@@ -52,7 +52,7 @@ export const useCompanies = (): UseCompaniesReturn => {
       // small delay so spinner can render
       await new Promise((r) => setTimeout(r, 50));
 
-      const response: SavedCompanyesResponse = await getCompanies(page, pageSize);
+      const response: SavedCompanyesResponse = await getCompanies(page, pageSize, query);
       await ensureMinimumLoadingTime(startTime);
 
       setState((prev) => ({

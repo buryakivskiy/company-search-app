@@ -5,14 +5,21 @@ import type { PaginatedResponse } from '@/shared/types/api.types';
 const client = new FetchClient();
 
 /**
- * Get all saved companies with pagination
+ * Search saved companies with optional query and pagination
  */
 export const getCompanies = async (
   page: number = 1,
-  pageSize: number = 10
+  pageSize: number = 10,
+  query?: string
 ): Promise<PaginatedResponse<SavedCompany>> => {
+  const queryParams = new URLSearchParams();
+  queryParams.append('page', page.toString());
+  queryParams.append('pageSize', pageSize.toString());
+  if (query?.trim()) {
+    queryParams.append('query', query);
+  }
   return client.get<PaginatedResponse<SavedCompany>>(
-    `/api/companies?page=${page}&pageSize=${pageSize}`
+    `/api/companies?${queryParams.toString()}`
   );
 };
 
